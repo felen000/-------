@@ -1,0 +1,21 @@
+.container {
+	max-width: 1000px;
+}
+
+.important {
+	/* background-color: rgba(249, 22, 6, 0.614); */
+	border-color: rgba(249, 22, 6, .7);
+}
+
+.study {
+	border-color: rgba(19, 105, 218, 0.7);
+}
+
+
+.btn-close {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	width: 0.5em;
+	height: 0.5em;
+}
