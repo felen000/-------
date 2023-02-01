@@ -6,14 +6,12 @@ let dateInput = document.querySelector(`#date`);
 let notesNode = document.querySelector(`#notes`);
 let selectNode = document.querySelector(`#select`);
 let searchNode = document.querySelector(`#search`);
-let deletButtons;
+let deleteButtons;
 let oldNotes = getNotesFromLocalStorage();
 let notes = oldNotes ? oldNotes : [];
 
-// Отрисовка заметок сохранённых в localstorage
 render();
 
-// Добавление новой заметки
 saveButton.addEventListener(`click`, function () {
   let note = setNote();
 
@@ -23,30 +21,27 @@ saveButton.addEventListener(`click`, function () {
   selectNode.value = `all`;
 });
 
-
-
-// Поиск по категории
 selectNode.addEventListener(`input`, searchByCategory);
 
-// Поиск по содержанию
 searchNode.addEventListener(`input`, searchByContent);
 
 function renderNote(note) {
   notesNode.innerHTML = `
-	<div class="col-md-3">
-		<div class="card ${note.categoryClass}" data-id="${note.id}">
-		<button type="button" class="btn-close" aria-label="Close"></button>
-			<div class="card-body">
-				<h5 class="card-title">${note.title}</h5>
-				<h6 class="card-subtitle mb-2 text-muted">${note.category}</h6>
-				<p class="card-text">${note.text}</p>
-			</div>
-			<div class="card-footer text-muted">
-				${note.date}
+		<div class="col-md-3">
+			<div class="card ${note.categoryClass}" data-id="${note.id}">
+			<button type="button" class="btn-close" aria-label="Close"></button>
+				<div class="card-body">
+					<h5 class="card-title">${note.title}</h5>
+					<h6 class="card-subtitle mb-2 text-muted">${note.category}</h6>
+					<p class="card-text">${note.text}</p>
+				</div>
+				<div class="card-footer text-muted">
+					${note.date}
+				</div>
 			</div>
 		</div>
-	</div>
 	` + notesNode.innerHTML;
+
   titleInput.value = ``;
   categoryInput.value = ``;
   textInput.value = ``;
@@ -55,18 +50,21 @@ function renderNote(note) {
 
 function render() {
   notesNode.innerHTML = ``;
+
   for (let i = 0; i < notes.length; i++) {
     let note = notes[i];
     renderNote(note);
   }
-	deletButtons = document.querySelectorAll(`.btn-close`);
-	deletButtons.forEach(button => 
-		button.addEventListener(`click`, function() {
-			let noteId = button.closest(`.card`).dataset.id;
-			console.log(noteId);
-			deleteNote(noteId)
-		})
-	)
+
+  deleteButtons = document.querySelectorAll(`.btn-close`);
+
+  deleteButtons.forEach((button) =>
+    button.addEventListener(`click`, function () {
+      let noteId = button.closest(`.card`).dataset.id;
+      console.log(noteId);
+      deleteNote(noteId);
+    })
+  );
 }
 
 function setNote() {
@@ -75,7 +73,8 @@ function setNote() {
   let text = textInput.value;
   let date = dateInput.value;
   let categoryClass = ``;
-	let id = String(Math.random()).slice(2)
+  let id = String(Math.random()).slice(2);
+
   if (category.toLowerCase().replace(`ё`, `е`) == `учеба`) {
     categoryClass = `study`;
   } else if (category.toLowerCase() == `важное`) {
@@ -83,7 +82,7 @@ function setNote() {
   }
 
   let note = {
-		id: id,
+    id: id,
     title: title,
     category: category,
     text: text,
@@ -95,13 +94,15 @@ function setNote() {
 }
 
 function saveNotesToLocalStorage() {
-  let count = 0;
+  let notesCount = 0;
+
   for (let i = 0; i < notes.length; i++) {
     let note = JSON.stringify(notes[i]);
     localStorage.setItem(i, note);
-    count++;
+    notesCount++;
   }
-  localStorage.setItem(`notesCount`, count);
+
+  localStorage.setItem(`notesCount`, notesCount);
 }
 
 function getNotesFromLocalStorage() {
@@ -112,15 +113,18 @@ function getNotesFromLocalStorage() {
     let note = JSON.parse(localStorage.getItem(i));
     array.push(note);
   }
+
   return array;
 }
 
 function searchByCategory() {
   notesNode.innerHTML = ``;
-  let option = selectNode.value;
+
+  let category = selectNode.value;
+
   for (let i = 0; i < notes.length; i++) {
     let note = notes[i];
-    if (option == `all` || option == note.categoryClass) {
+    if (category == `all` || category == note.categoryClass) {
       renderNote(note);
     }
   }
@@ -128,6 +132,7 @@ function searchByCategory() {
 
 function searchByContent() {
   notesNode.innerHTML = ``;
+
   let content = searchNode.value;
 
   for (let i = 0; i < notes.length; i++) {
@@ -139,13 +144,14 @@ function searchByContent() {
 }
 
 function deleteNote(id) {
-	for (let i = 0; i < notes.length; i++) {
-		let note = notes[i];
-		if (note.id == id) {
-			notes.splice(i, 1)
-		}
-	}
-	localStorage.clear()
-	saveNotesToLocalStorage()
-	render()
+  for (let i = 0; i < notes.length; i++) {
+    let note = notes[i];
+    if (note.id == id) {
+      notes.splice(i, 1);
+    }
+  }
+
+  localStorage.clear();
+  saveNotesToLocalStorage();
+  render();
 }
